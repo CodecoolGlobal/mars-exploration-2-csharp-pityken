@@ -41,7 +41,7 @@ internal class Program
 
         foreach (var cnt in Enumerable.Range(0, count))
         {
-            string outputFile = @$"{WorkDir}\exploration-{cnt}.map";
+            string outputFile = @$"{WorkDir}maps\exploration-{cnt}.map";
             var map = mapGenerator.Generate(mapConfig);
 
             if (map.SuccessfullyGenerated)

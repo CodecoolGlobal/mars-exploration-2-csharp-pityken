@@ -28,11 +28,10 @@ internal class Program
         IMineralListProvider mineralListProvider = new MineralListProvider();
         IStartingCoordinateProvider startingCoordinateProvider = new StartingCoordinateProvider();
         IRoverConfigurationProvider roverConfigurationProvider = new RoverConfigurationProvider();
-        IRoverConfigurationValidator configurationValidator= new RoverConfigurationValidator();
 
 
         var roverDeployer = new MarsRoverDeployer();
-        var landingSpot = startingCoordinateProvider.GetStartingCoordinate(x, y);
+        var landingSpot = startingCoordinateProvider.GetStartingCoordinate(6, 6);
 
         var mineralGoals = mineralListProvider.GetMinerals(possibleMinerals, amountToGather);
         var roverConfiguration = roverConfigurationProvider.GetRoverConfiguration(mapFile, landingSpot, mineralGoals, simulationSteps);

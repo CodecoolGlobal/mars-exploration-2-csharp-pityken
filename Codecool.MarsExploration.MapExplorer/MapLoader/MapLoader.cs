@@ -9,13 +9,13 @@ internal class MapLoader : IMapLoader
         var rawMap = File.ReadAllLines(mapFile);
         var dimension = rawMap.Length;
         var loadedMap = new string[dimension,dimension];
-        for(var i = 0; i < dimension; i++)
+        for( int i = 0; i <dimension; i++)
         {
-            rawMap[i].Select(x => loadedMap[i,rawMap[i].IndexOf(x)]);
-        }
-        foreach(var line in rawMap) 
-        {
-            line.Select(x => loadedMap[Array.IndexOf(rawMap, line), line.IndexOf(x)]);
+            var temp = rawMap[i].Split("");
+            for( int j = 0; j < dimension; j++)
+            {
+               loadedMap[i, j] = temp[j];
+            }
         }
         return new Map(loadedMap, true);
     }

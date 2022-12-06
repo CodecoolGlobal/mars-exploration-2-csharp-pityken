@@ -1,38 +1,38 @@
 ﻿using Codecool.MarsExploration.MapExplorer.Configuration.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Codecool.MarsExploration.MapExplorer.Configuration.Service
 {
     internal class RoverConfigurationValidator : IRoverConfigurationValidator
     {
-        private IEnumerable<string> _obstacles;
+        private readonly IEnumerable<string> _obstacles;
         public RoverConfigurationValidator(IEnumerable<string> obstacles)
         {
-            _obstacles = obstackles;
+            _obstacles = obstacles;
         }
 
         public bool Validate(RoverConfiguration roverConfig)
         {
+            if (roverConfig.fileLocation == "" || roverConfig.mineralList.Count() == 0 || roverConfig.simulationSteps == 0)
+            {
+                return false;
+            }
             var map = File.ReadAllLines(roverConfig.fileLocation);
             var startingCoordinate = roverConfig.startingCoordinate;
-            if (_obstackles.Any(x => x != map[startingCoordinate.X][startingCoordinate.Y].ToString()))
+            if (_obstacles.Any(x => x != map[startingCoordinate.X][startingCoordinate.Y].ToString()))
             {
-                if (_obstackles.Any(x => x == map[startingCoordinate.X - 1][startingCoordinate.Y].ToString())) {
-                    return false;
-                }
-                if (_obstackles.Any(x => x == map[startingCoordinate.X][startingCoordinate.Y - 1].ToString()))
+                if (_obstacles.Any(x => x == map[startingCoordinate.X - 1][startingCoordinate.Y].ToString()))
                 {
                     return false;
                 }
-                if (_obstackles.Any(x => x == map[startingCoordinate.X + 1][startingCoordinate.Y].ToString()))
+                if (_obstacles.Any(x => x == map[startingCoordinate.X][startingCoordinate.Y - 1].ToString()))
                 {
                     return false;
                 }
-                if (_obstackles.Any(x => x == map[startingCoordinate.X][startingCoordinate.Y + 1].ToString()))
+                if (_obstacles.Any(x => x == map[startingCoordinate.X + 1][startingCoordinate.Y].ToString()))
+                {
+                    return false;
+                }
+                if (_obstacles.Any(x => x == map[startingCoordinate.X][startingCoordinate.Y + 1].ToString()))
                 {
                     return false;
                 }

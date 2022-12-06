@@ -7,6 +7,5 @@ using System.Threading.Tasks;
 
 namespace Codecool.MarsExploration.MapExplorer.MarsRover
 {
-    public record MarsRover(int Id, Coordinate CurrentPosition, int SightDistance, IEnumerable<Coordinate> Coordinates);
-    
+    public record MarsRover(int Id, Coordinate currentPosition, int SightDistance, IEnumerable<Coordinate> Coordinates); 
 }

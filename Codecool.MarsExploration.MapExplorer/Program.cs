@@ -13,8 +13,9 @@ internal class Program
     public static void Main(string[] args)
     {
         var mapFile = $@"{WorkDir}\Resources\exploration-0.map";
-        var row = File.ReadAllLines(mapFile).Length;
-        var col = File.ReadAllLines(mapFile)[0].Length;
+        var fileMap = File.ReadAllLines(mapFile);
+        var row = fileMap.Length;
+        var col = fileMap[0].Length;
         int simulationSteps = 10, amountToGather = 5;
         var possibleMinerals = new List<string>() {
             "*",

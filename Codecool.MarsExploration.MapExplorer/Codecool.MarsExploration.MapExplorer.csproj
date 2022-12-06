@@ -27,9 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Configuration" />
-      <Folder Include="MarsRover" />
-      <Folder Include="MarsRover\" />
       <Folder Include="Configuration\" />
     </ItemGroup>
 

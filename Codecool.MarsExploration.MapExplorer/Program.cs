@@ -28,7 +28,6 @@ internal class Program
         IMineralListProvider mineralListProvider = new MineralListProvider();
         IStartingCoordinateProvider startingCoordinateProvider = new StartingCoordinateProvider();
         IRoverConfigurationProvider roverConfigurationProvider = new RoverConfigurationProvider();
-        IRoverConfigurationValidator configurationValidator= new RoverConfigurationValidator();
 
 
         var roverDeployer = new MarsRoverDeployer();

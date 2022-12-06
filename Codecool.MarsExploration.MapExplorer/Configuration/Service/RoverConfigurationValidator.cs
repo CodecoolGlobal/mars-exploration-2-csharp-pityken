@@ -9,13 +9,36 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.Service
 {
     internal class RoverConfigurationValidator : IRoverConfigurationValidator
     {
-        public RoverConfigurationValidator()
+        private IEnumerable<string> _obstacles;
+        public RoverConfigurationValidator(IEnumerable<string> obstacles)
         {
+            _obstacles = obstackles;
         }
 
-        public bool Validate(RoverConfiguration mapConfig)
+        public bool Validate(RoverConfiguration roverConfig)
         {
-            throw new NotImplementedException();
+            var map = File.ReadAllLines(roverConfig.fileLocation);
+            var startingCoordinate = roverConfig.startingCoordinate;
+            if (_obstackles.Any(x => x != map[startingCoordinate.X][startingCoordinate.Y].ToString()))
+            {
+                if (_obstackles.Any(x => x == map[startingCoordinate.X - 1][startingCoordinate.Y].ToString())) {
+                    return false;
+                }
+                if (_obstackles.Any(x => x == map[startingCoordinate.X][startingCoordinate.Y - 1].ToString()))
+                {
+                    return false;
+                }
+                if (_obstackles.Any(x => x == map[startingCoordinate.X + 1][startingCoordinate.Y].ToString()))
+                {
+                    return false;
+                }
+                if (_obstackles.Any(x => x == map[startingCoordinate.X][startingCoordinate.Y + 1].ToString()))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -6,9 +6,9 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.Provider
     public class StartingCoordinateProvider : IStartingCoordinateProvider
     {
         private Random _random = new Random();
-        public Coordinate GetStartingCoordinate(int minimumSize, int maximumSize)
+        public Coordinate GetStartingCoordinate(int maximumSize)
         {
-            return new Coordinate(_random.RandomWithinRanges(minimumSize, maximumSize), _random.RandomWithinRanges(minimumSize, maximumSize));
+            return new Coordinate(_random.Next(0, maximumSize), _random.Next(0, maximumSize));
         }
     }
 }

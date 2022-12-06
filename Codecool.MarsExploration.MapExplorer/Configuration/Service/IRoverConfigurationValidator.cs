@@ -4,6 +4,6 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.Service
 {
     public interface IRoverConfigurationValidator
     {
-        bool Validate(RoverConfiguration mapConfig);
+        bool Validate(RoverConfiguration roverConfig);
     }
 }

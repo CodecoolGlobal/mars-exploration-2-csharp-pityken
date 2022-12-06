@@ -4,6 +4,6 @@ namespace Codecool.MarsExploration.MapExplorer.Configuration.Provider
 {
     public interface IStartingCoordinateProvider
     {
-        Coordinate GetStartingCoordinate(int min, int max);
+        Coordinate GetStartingCoordinate(int max);
     }
 }

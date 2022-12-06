@@ -1,15 +1,26 @@
-﻿using Codecool.MarsExploration.MapGenerator.Calculators.Model;
+﻿using Codecool.MarsExploration.MapExplorer.Configuration.Provider;
 
 namespace Codecool.MarsExploration.MapExplorer;
 
-class Program
+internal class Program
 {
     private static readonly string WorkDir = AppDomain.CurrentDomain.BaseDirectory;
 
     public static void Main(string[] args)
     {
-        string mapFile = $@"{WorkDir}\Resources\exploration-0.map";
-        Coordinate landingSpot = new Coordinate(6, 6);
+        var mapFile = $@"{WorkDir}\Resources\exploration-0.map";
+        int x = 6, y = 6, simulationSteps = 10, amountToGather = 5;
+        var possibleMinerals = new List<string>() {
+            "*",
+        };
+
+        IMineralListProvider mineralListProvider = new MineralListProvider();
+        IStartingCoordinateProvider startingCoordinateProvider = new StartingCoordinateProvider();
+        IRoverConfigurationProvider roverConfigurationProvider = new RoverConfigurationProvider();
+
+        var landingSpot = startingCoordinateProvider.GetStartingCoordinate(x, y);
+        var mineralGoals = mineralListProvider.GetMinerals(possibleMinerals, amountToGather);
+        var roverConfiguration = roverConfigurationProvider.GetRoverConfiguration(mapFile, landingSpot, mineralGoals, simulationSteps);
 
     }
 }

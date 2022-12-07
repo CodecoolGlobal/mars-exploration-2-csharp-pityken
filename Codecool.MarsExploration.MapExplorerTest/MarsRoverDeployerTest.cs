@@ -20,8 +20,7 @@ namespace Codecool.MarsExploration.MapExplorerTest
         private int _row, _col;
         private string _mapFile;
         private IStartingCoordinateProvider _startingCoordinateProvider;
-        bool roverExists;
-            int counter = 0;
+        private static int counter = 0;
 
         [SetUp]
         public void SetUp()
@@ -52,12 +51,6 @@ namespace Codecool.MarsExploration.MapExplorerTest
                 Console.WriteLine(symbol);
                 if(symbol == "r") counter++;
             }
-            if(counter == 1)
-            {
-                roverExists = true;
-                return;
-            }
-            else roverExists = false;
         }
 
         [Test]

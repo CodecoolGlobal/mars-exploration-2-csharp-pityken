@@ -39,8 +39,6 @@ internal class Program
 
         var roverDeployer = new MarsRoverDeployer();
 
-
-
         var mineralGoals = mineralListProvider.GetMinerals(possibleMinerals, amountToGather);
         var roverConfiguration = roverConfigurationProvider.GetRoverConfiguration(mapFile, landingSpot, mineralGoals, simulationSteps);
         IRoverConfigurationValidator roverConfigrationValidator = new RoverConfigurationValidator(_obstacles);

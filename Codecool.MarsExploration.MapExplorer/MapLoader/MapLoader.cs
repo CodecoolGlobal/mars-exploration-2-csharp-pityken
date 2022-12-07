@@ -2,7 +2,7 @@
 
 namespace Codecool.MarsExploration.MapExplorer.MapLoader;
 
-internal class MapLoader : IMapLoader
+public class MapLoader : IMapLoader
 {
     public Map Load(string mapFile)
     {

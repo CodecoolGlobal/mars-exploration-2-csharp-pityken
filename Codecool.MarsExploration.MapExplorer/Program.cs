@@ -44,7 +44,7 @@ internal class Program
         IRoverConfigurationValidator roverConfigrationValidator = new RoverConfigurationValidator(_obstacles);
 
         var roverConfigurationIsValid = roverConfigrationValidator.Validate(roverConfiguration);
-        roverDeployer.Deploy(roverConfigurationIsValid, roverConfiguration, null);
+        roverDeployer.Deploy(roverConfigurationIsValid, roverConfiguration, loadedMap);
 
     }
 }

@@ -11,14 +11,13 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
 {
     public class MarsRoverDeployer
     {
-        private readonly IRoverConfigurationValidator _configValidator = new RoverConfigurationValidator();
 
         public MarsRoverDeployer()
         {
 
         }
 
-        public void Deploy(bool canDeploy, RoverConfiguration roverConfig, )
+        public void Deploy(bool canDeploy, RoverConfiguration roverConfig, Map map)
         {
             if (!canDeploy) 
             {
@@ -27,10 +26,30 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
                 Console.ForegroundColor = ConsoleColor.Gray;
                 return;
             }
-            roverConfig.startingCoordinate
+            
+            var startPoint = roverConfig.startingCoordinate;
+            map.Representation[startPoint.X, startPoint.Y] = "S";
+
+            if (map.Representation[startPoint.X - 1, startPoint.Y] == " ")
+            {
+                map.Representation[startPoint.X - 1, startPoint.Y] = "r";
+                return;
+            }
+            if (map.Representation[startPoint.X + 1, startPoint.Y] == " ")
+            {
+                map.Representation[startPoint.X + 1, startPoint.Y] = "r";
+                return;
+            }
+            if (map.Representation[startPoint.X, startPoint.Y - 1] == " ")
+            {
+                map.Representation[startPoint.X, startPoint.Y - 1] = "r";
+                return;
+            }
+            if (map.Representation[startPoint.X, startPoint.Y + 1] == " ")
+            {
+                map.Representation[startPoint.X, startPoint.Y + 1] = "r";
+                return;
+            }
         }
     }
-
 }
-
-

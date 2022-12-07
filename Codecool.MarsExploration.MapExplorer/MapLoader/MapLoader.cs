@@ -9,12 +9,12 @@ public class MapLoader : IMapLoader
         var rawMap = File.ReadAllLines(mapFile);
         var dimension = rawMap.Length;
         var loadedMap = new string[dimension,dimension];
-        for( int i = 0; i <dimension; i++)
+        for( int i = 0; i < dimension; i++)
         {
-            var temp = rawMap[i].Split("");
             for( int j = 0; j < dimension; j++)
             {
-               loadedMap[i, j] = temp[j];
+                char c = rawMap[i][j];
+                loadedMap[i, j] += c;
             }
         }
         return new Map(loadedMap, true);

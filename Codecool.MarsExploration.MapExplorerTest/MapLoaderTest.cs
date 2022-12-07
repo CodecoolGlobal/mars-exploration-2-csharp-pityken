@@ -1,4 +1,5 @@
 ﻿using Codecool.MarsExploration.MapExplorer.MapLoader;
+using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 
@@ -20,11 +21,11 @@ public class MapLoaderTest
         _fileMap = _mapLoader.Load(_mapFile);
     }
 
-    [TestCase(0, 10)]
+    [TestCase(16,16)]
     public void TestMapLoader_LoadSameSymbolAtSetCoordinate(int x, int y)
     {
-        var charInRead = _fileString[x].Split("").ElementAt(y);
-        var charInMap = _fileMap.Representation[x, y];
+        var charInRead = _fileString[x].ElementAt(y) + "";
+        var charInMap = _fileMap.GetByCoordinate(new Coordinate(x,y));
         Assert.That(charInMap, Is.EqualTo(charInRead));
     }
 

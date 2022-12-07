@@ -1,44 +1,51 @@
 ﻿using Codecool.MarsExploration.MapExplorer.Configuration.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 
 namespace Codecool.MarsExploration.MapExplorer.Configuration.Service
 {
-    internal class RoverConfigurationValidator : IRoverConfigurationValidator
+    public class RoverConfigurationValidator : IRoverConfigurationValidator
     {
-        private IEnumerable<string> _obstacles;
+        private readonly IEnumerable<string> _obstacles;
         public RoverConfigurationValidator(IEnumerable<string> obstacles)
         {
             _obstacles = obstacles;
         }
 
+        private IEnumerable<char> GetNeighbours(Coordinate coordinate, string[] map)
+        {
+            var neighbours = new List<char>();
+            if (coordinate.Y != 0)
+            {
+                neighbours.Add(map[coordinate.Y - 1][coordinate.X]);
+            }
+            if (coordinate.X != 0)
+            {
+                neighbours.Add(map[coordinate.Y][coordinate.X - 1]);
+            }
+            if (coordinate.Y != map.Length - 1)
+            {
+                neighbours.Add(map[coordinate.Y + 1][coordinate.X]);
+            }
+            if (coordinate.X != map[0].Length - 1)
+            {
+                neighbours.Add(map[coordinate.Y][coordinate.X + 1]);
+            }
+            return neighbours;
+        }
+        private bool CoordinateIsValid(Coordinate coordinate, string[] map)
+        {
+            var neighbours = GetNeighbours(coordinate, map);
+            return neighbours.Any(x => !_obstacles.Contains(x.ToString()));
+        }
         public bool Validate(RoverConfiguration roverConfig)
         {
+            if (roverConfig.fileLocation == "" || roverConfig.mineralList.Count() == 0 || roverConfig.simulationSteps == 0)
+            {
+                return false;
+            }
             var map = File.ReadAllLines(roverConfig.fileLocation);
             var startingCoordinate = roverConfig.startingCoordinate;
-            if (_obstacles.Any(x => x != map[startingCoordinate.X][startingCoordinate.Y].ToString()))
-            {
-                if (_obstacles.Any(x => x == map[startingCoordinate.X - 1][startingCoordinate.Y].ToString())) {
-                    return false;
-                }
-                if (_obstacles.Any(x => x == map[startingCoordinate.X][startingCoordinate.Y - 1].ToString()))
-                {
-                    return false;
-                }
-                if (_obstacles.Any(x => x == map[startingCoordinate.X + 1][startingCoordinate.Y].ToString()))
-                {
-                    return false;
-                }
-                if (_obstacles.Any(x => x == map[startingCoordinate.X][startingCoordinate.Y + 1].ToString()))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return CoordinateIsValid(startingCoordinate, map);
         }
     }
 }

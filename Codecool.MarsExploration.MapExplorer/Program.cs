@@ -13,7 +13,10 @@ internal class Program
     public static void Main(string[] args)
     {
         var mapFile = $@"{WorkDir}\Resources\exploration-0.map";
-        int dimension = 6, simulationSteps = 10, amountToGather = 5;
+        var fileMap = File.ReadAllLines(mapFile);
+        var row = fileMap.Length;
+        var col = fileMap[0].Length;
+        int simulationSteps = 10, amountToGather = 5;
         var possibleMinerals = new List<string>() {
             "*",
             "%",
@@ -30,8 +33,10 @@ internal class Program
         IRoverConfigurationProvider roverConfigurationProvider = new RoverConfigurationProvider();
 
 
+        var landingSpot = startingCoordinateProvider.GetStartingCoordinate(row, col);
+
+
         var roverDeployer = new MarsRoverDeployer();
-        var landingSpot = startingCoordinateProvider.GetStartingCoordinate(6, 6);
 
         var mineralGoals = mineralListProvider.GetMinerals(possibleMinerals, amountToGather);
         var roverConfiguration = roverConfigurationProvider.GetRoverConfiguration(mapFile, landingSpot, mineralGoals, simulationSteps);

@@ -35,17 +35,17 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
                 map.Representation[startPoint.X - 1, startPoint.Y] = "r";
             }
 
-            if (map.Representation[startPoint.X + 1, startPoint.Y] == " ")
+            else if (map.Representation[startPoint.X + 1, startPoint.Y] == " ")
             {
                 map.Representation[startPoint.X + 1, startPoint.Y] = "r";
             }
 
-            if (map.Representation[startPoint.X, startPoint.Y - 1] == " ")
+            else if (map.Representation[startPoint.X, startPoint.Y - 1] == " ")
             {
                 map.Representation[startPoint.X, startPoint.Y - 1] = "r";
             }
 
-            if (map.Representation[startPoint.X, startPoint.Y + 1] == " ")
+            else if (map.Representation[startPoint.X, startPoint.Y + 1] == " ")
             {
                 map.Representation[startPoint.X, startPoint.Y + 1] = "r";
             }

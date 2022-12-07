@@ -6,5 +6,5 @@ using Codecool.MarsExploration.MapExplorer.Exploration;
 
 namespace Codecool.MarsExploration.MapExplorer.Simulation.Model
 {
-    public record SimulationContext(int Steps, int StepLimit, MarsRover.MarsRover Rover, Coordinate StartingCoordinates, Map map, List<string> ResourceSymbols, ExplorationOutcome Outcome);
+    public record SimulationContext(int Steps, int StepLimit, MarsRover.MarsRover Rover, Coordinate StartingCoordinates, Map map, List<string> ResourceSymbols, ExplorationOutcome Outcome, RoverConfiguration roverConfig);
 }

@@ -21,6 +21,7 @@ namespace Codecool.MarsExploration.MapExplorerTest
         private string _mapFile;
         private IStartingCoordinateProvider _startingCoordinateProvider;
         bool roverExists;
+            int counter = 0;
 
         [SetUp]
         public void SetUp()
@@ -38,10 +39,14 @@ namespace Codecool.MarsExploration.MapExplorerTest
             _row = fileMap.Length;
             _col = fileMap[0].Length;
             _configProvider = new RoverConfigurationProvider();
-            _startingCoordinateProvider = new StartingCoordinateProvider(); 
-            
+            _startingCoordinateProvider = new StartingCoordinateProvider();
+
+            var roverConfig = _configProvider.GetRoverConfiguration(
+                    _mapFile, _startingCoordinateProvider.GetStartingCoordinate(_row, _col), new List<string> { "*", "%" }, 10);
+            var canDeploy = _validator.Validate(roverConfig);
             var map = _mapLoader.Load(_mapFile);
-            int counter = 0;
+
+            _deployer.Deploy(canDeploy, roverConfig, map);
             foreach(var symbol in map.Representation)
             {
                 Console.WriteLine(symbol);
@@ -67,7 +72,7 @@ namespace Codecool.MarsExploration.MapExplorerTest
         [Test]
         public void OneRoverIsOnTheMap()
         {
-            Assert.True(roverExists);
+            Assert.That(counter, Is.EqualTo(1));
         }
     }
 }

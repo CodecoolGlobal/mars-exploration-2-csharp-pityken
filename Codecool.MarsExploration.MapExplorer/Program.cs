@@ -1,8 +1,8 @@
 ﻿using Codecool.MarsExploration.MapExplorer.Configuration.Provider;
 using Codecool.MarsExploration.MapExplorer.Configuration.Service;
-
+using Codecool.MarsExploration.MapExplorer.MapLoader;
 using Codecool.MarsExploration.MapExplorer.MarsRover;
-
+using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 
 namespace Codecool.MarsExploration.MapExplorer;
 
@@ -27,7 +27,8 @@ internal class Program
             "%",
             "*"
         };
-
+        IMapLoader mapLoader = new MapLoader.MapLoader();
+        Map loadedMap = mapLoader.Load(mapFile);
         IMineralListProvider mineralListProvider = new MineralListProvider();
         IStartingCoordinateProvider startingCoordinateProvider = new StartingCoordinateProvider();
         IRoverConfigurationProvider roverConfigurationProvider = new RoverConfigurationProvider();

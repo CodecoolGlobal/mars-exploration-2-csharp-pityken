@@ -4,6 +4,7 @@ using Codecool.MarsExploration.MapGenerator.Calculators.Model;
 using Codecool.MarsExploration.MapGenerator.MapElements.Model;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,13 +15,13 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
     {
         private SimulationContext _context;
         Random random = new Random();
-
+        
         public ExplorationSimulator(SimulationContext context)
         {
             _context= context;
         }
         
-        public IEnumerable<Coordinate> GetResourceCoordinates(string resourceSymbol)
+        public IEnumerable<Coordinate> GetResourceCoordinate(string resourceSymbol)
         {
             int symbolCounter = 0;
             foreach(var symbol in _context.ResourceSymbols) 
@@ -30,9 +31,9 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
             
             var map = _context.map.Representation;
             List<Coordinate> coordinates = new List<Coordinate>();
-            for(int i = 0; i < map.Length; i++)
+            for(int i = 0; i < map.GetLength(0); i++)
             {
-                for(int j = 0; j < map.Length; j++)
+                for(int j = 0; j < map.GetLength(1); j++)
                 {
                     if (map[i,j] == resourceSymbol) 
                     {
@@ -49,7 +50,7 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
             Dictionary<string, List<Coordinate>> resourceCoordinates = new() { };
             foreach (var symbol in symbols) 
             {
-                resourceCoordinates.Add(symbol, GetResourceCoordinates(symbol).ToList());
+                resourceCoordinates.Add(symbol, GetResourceCoordinate(symbol).ToList());
             }
             
             return resourceCoordinates;
@@ -65,18 +66,28 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
         {
             var resCoords = FillDictionary();
             Dictionary<Coordinate, double> distanceDictionary = new() { };
-            foreach (var resCoord in resCoords) 
+            foreach (var resCoord in resCoords)
             {
-                foreach(var coord in resCoord.Value)
+                foreach (var coord in resCoord.Value)
                 {
                     distanceDictionary.Add(coord, CalculateDistance(_context.Rover.currentPosition, coord));
+                    //Console.WriteLine($"{_context.Rover.currentPosition.X}, {_context.Rover.currentPosition.Y}\t|\t{coord.X}, {coord.Y}, {CalculateDistance(_context.Rover.currentPosition, coord)}");
                 }
             }
+            var visibleResourceDict = distanceDictionary.Where(x => x.Value <= _context.Rover.SightDistance ? Console.WriteLine(x) : Console.WriteLine("nem"));
 
-            var visibleResourceDict = distanceDictionary.Where(x => x.Value <= _context.Rover.SightDistance);
-            
             var orderedDict = visibleResourceDict.OrderBy(x => x.Value);
-            return new Coordinate(orderedDict.First().Key.X, orderedDict.First().Key.Y);
+            foreach(var kvp in visibleResourceDict)
+            {
+                Console.WriteLine("visDict====>{0}", kvp.Value);
+            }
+            //Console.WriteLine("disDict====>{0}", distanceDictionary.Count());
+            //Console.WriteLine("ResDict====>{0}", resCoords.Count());
+            //Console.WriteLine("OrdDict====>{0}", orderedDict.Count());
+            
+            return new Coordinate(0, 0); 
+                //new Coordinate(orderedDict.First().Key.X, orderedDict.First().Key.Y);
+
         }
 
         public IEnumerable<Coordinate> CheckNeighbours()
@@ -155,21 +166,21 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
                 {
                         newY = currentPos.Y + 1;
                 }
-                else
-                {
-                    newX = possibleTiles.First().X;
-                    newY = possibleTiles.First().Y;
-                }
             
 
             if(_context.map.GetByCoordinate(new Coordinate(newX, newY)) != " ") 
             {
-                
+                    newX = possibleTiles.First().X;
+                    newY = possibleTiles.First().Y;
             }
 
             return new Coordinate(newX, newY);
         }
-            
 
+        public string PickUpResource(Coordinate currPos)
+        {
+            var symbol = _context.map.Representation[currPos.X, currPos.Y];
+            return symbol;
+        }
     }
 }

@@ -58,14 +58,14 @@ internal class Program
 
         Rover = roverDeployer.Deploy(roverConfigurationIsValid, roverConfiguration, loadedMap);
         var currPos = Rover.currentPosition;
-        SimulationContext Context = new SimulationContext(1, 300, Rover, Rover.currentPosition, loadedMap, possibleMinerals, Outcome, roverConfiguration);
+        SimulationContext Context = new SimulationContext(1, 50, Rover, Rover.currentPosition, loadedMap, possibleMinerals, Outcome, roverConfiguration);
         IExplorationSimulator explorationSimulator = new ExplorationSimulator(Context);
         int waterCount = 0;
         int mineralCount = 0;
         int limit = Context.StepLimit;
+        var nearestResource = explorationSimulator.FindNearestResourceCoordinate();
         do
         {
-            var nearestResource = explorationSimulator.FindNearestResourceCoordinate();
 
             var resourceList = roverConfiguration.mineralList.ToList();
             while (currPos != nearestResource)
@@ -84,7 +84,7 @@ internal class Program
             if (encounteredSymbol == "*") waterCount--;
             if (encounteredSymbol == "%") mineralCount--;
             limit--;
-
+            nearestResource = explorationSimulator.FindNearestResourceCoordinate();
         } while ((mineralCount != 0 && waterCount != 0) || limit != 0);
     }
 }

@@ -13,7 +13,7 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
     public class ExplorationSimulator : IExplorationSimulator
     {
         private SimulationContext _context;
-
+        Random random = new Random();
 
         public ExplorationSimulator(SimulationContext context)
         {
@@ -69,10 +69,13 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
             {
                 foreach(var coord in resCoord.Value)
                 {
-                    distanceDictionary.Add(coord, CalculateDistance(_context.StartingCoordinates, coord));
+                    distanceDictionary.Add(coord, CalculateDistance(_context.Rover.currentPosition, coord));
                 }
             }
-            var orderedDict = distanceDictionary.OrderBy(x => x.Value);
+
+            var visibleResourceDict = distanceDictionary.Where(x => x.Value <= _context.Rover.SightDistance);
+            
+            var orderedDict = visibleResourceDict.OrderBy(x => x.Value);
             return new Coordinate(orderedDict.First().Key.X, orderedDict.First().Key.Y);
         }
 
@@ -110,7 +113,66 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
             return possibleTiles;
         }
 
+        public Coordinate Move(Coordinate currentPos)
+        {
+            var nearest = FindNearestResourceCoordinate();
+            var possibleTiles = CheckNeighbours().ToList();
+            Coordinate newTile;
+            int newX;
+            int newY;
+            if (nearest is null) 
+            {
+                List<Coordinate> visitedTiles = new List<Coordinate>();
+                var Rover = _context.Rover;
+                visitedTiles.Add(Rover.currentPosition);
+                foreach(var visitedTile in visitedTiles)
+                {
+                if (possibleTiles.Contains(visitedTile))
+                    {
+                        possibleTiles.Remove(visitedTile);
+                    }
+                }
 
+                var nextTile = possibleTiles[random.Next(possibleTiles.Count())];
+                return nextTile;
+            }
+
+            if(currentPos.X > nearest.X) 
+            {
+                if (_context.map.Representation[currentPos.X -1, currentPos.Y] == " ")
+                {
+                    newX = currentPos.X - 1;
+                    return new Coordinate(currentPos.X - 1, currentPos.Y);
+                }
+            }
+            else if(currentPos.X < nearest.X) 
+            {
+                if (_context.map.Representation[currentPos.X + 1, currentPos.Y] == " ")
+                {
+                    newX = currentPos.X + 1;
+                    return new Coordinate(currentPos.X + 1, currentPos.Y);
+                }
+            }
+            if(currentPos.Y > nearest.Y)
+            {
+                if (_context.map.Representation[currentPos.X, currentPos.Y - 1] == " ")
+                {
+                    newY = currentPos.Y - 1;
+                    return new Coordinate(currentPos.X, currentPos.Y - 1);
+                }
+            }
+            else if(currentPos.Y < nearest.Y) 
+            {
+                if (_context.map.Representation[currentPos.X, currentPos.Y + 1] == " ")
+                {
+                    newY = currentPos.Y + 1;
+                    return new Coordinate(currentPos.X, currentPos.Y + 1);
+                }
+            }
+
+            //return new Coordinate(newX, newY); ??
+        }
+            
 
     }
 }

@@ -56,7 +56,7 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
                 currPos = new Coordinate(startPoint.X, startPoint.Y + 1);
             }
             
-            MarsRover Rover = new MarsRover(1, currPos, 1, new List<Coordinate>(){});
+            MarsRover Rover = new MarsRover(1, currPos, 5, new List<Coordinate>(){});
             return Rover;
         }
     }

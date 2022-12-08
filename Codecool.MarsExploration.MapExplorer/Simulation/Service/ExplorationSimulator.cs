@@ -71,10 +71,10 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
                 foreach (var coord in resCoord.Value)
                 {
                     distanceDictionary.Add(coord, CalculateDistance(_context.Rover.currentPosition, coord));
-                    //Console.WriteLine($"{_context.Rover.currentPosition.X}, {_context.Rover.currentPosition.Y}\t|\t{coord.X}, {coord.Y}, {CalculateDistance(_context.Rover.currentPosition, coord)}");
+                    Console.WriteLine($"{_context.Rover.currentPosition.X}, {_context.Rover.currentPosition.Y}\t|\t{coord.X}, {coord.Y}, {CalculateDistance(_context.Rover.currentPosition, coord)}");
                 }
             }
-            var visibleResourceDict = distanceDictionary.Where(x => x.Value <= _context.Rover.SightDistance ? Console.WriteLine(x) : Console.WriteLine("nem"));
+            var visibleResourceDict = distanceDictionary.Where(x => x.Value <= _context.Rover.SightDistance);
 
             var orderedDict = visibleResourceDict.OrderBy(x => x.Value);
             foreach(var kvp in visibleResourceDict)
@@ -83,7 +83,7 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
             }
             //Console.WriteLine("disDict====>{0}", distanceDictionary.Count());
             //Console.WriteLine("ResDict====>{0}", resCoords.Count());
-            //Console.WriteLine("OrdDict====>{0}", orderedDict.Count());
+            Console.WriteLine("OrdDict====>{0}", orderedDict.Count());
             
             return new Coordinate(0, 0); 
                 //new Coordinate(orderedDict.First().Key.X, orderedDict.First().Key.Y);

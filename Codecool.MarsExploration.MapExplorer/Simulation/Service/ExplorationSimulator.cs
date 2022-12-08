@@ -76,40 +76,41 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
             return new Coordinate(orderedDict.First().Key.X, orderedDict.First().Key.Y);
         }
 
-        void Simulate()
+        public IEnumerable<Coordinate> CheckNeighbours()
         {
             var map = _context.map.Representation;
-            var Start = new Tile();
-            Start.Y = _context.StartingCoordinates.Y;
-            Start.X = _context.StartingCoordinates.X;
-
-            var Finish = new Tile();
-            Finish.X = FindNearestResourceCoordinate().X;
-            Finish.Y = FindNearestResourceCoordinate().Y;
-
-            var activeTiles = new List<Tile>();
-            activeTiles.Add(Start);
-            var visitedTiles = new List<Tile>();
-        }
-
-        private static List<Tile> GetPath(Map loadedMap, Tile currentTile, Tile target, string symbol)
-        {
-            var map = loadedMap.Representation;
-            var optimalTiles = new List<Tile>()
+            var startPoint = _context.Rover.currentPosition;
+            List<Coordinate> possibleTiles = new();
+            var neighbours = new List<Coordinate>();
+            if (startPoint.Y != 0)
             {
-                new Tile { X = currentTile.X, Y = currentTile.Y - 1, Parent = currentTile, Cost = currentTile.Cost + 1 },
-                new Tile { X = currentTile.X, Y = currentTile.Y + 1, Parent = currentTile, Cost = currentTile.Cost + 1 },
-                new Tile { X = currentTile.X - 1, Y = currentTile.Y, Parent = currentTile, Cost = currentTile.Cost + 1 },
-                new Tile { X = currentTile.X + 1, Y = currentTile.Y, Parent = currentTile, Cost = currentTile.Cost + 1 },
-            };
+                neighbours.Add(new Coordinate(startPoint.Y - 1, startPoint.X));
+            }
+            if (startPoint.X != 0)
+            {
+                neighbours.Add(new Coordinate(startPoint.Y, startPoint.X - 1));
+            }
+            if (startPoint.Y != map.Length - 1)
+            {
+                neighbours.Add(new Coordinate(startPoint.Y + 1, startPoint.X));
+            }
+            if (startPoint.X != map.Length - 1)
+            {
+                neighbours.Add(new Coordinate(startPoint.Y, startPoint.X + 1));
+            }
 
-            optimalTiles.ForEach(tile => tile.SetDistance(target.X, target.Y));
 
-            var border = map.Length - 1;
-
-            return optimalTiles.Where(tile => tile.X >= 0 && tile.X <= border)
-                                  .Where(tile => tile.Y >= 0 && tile.Y <= border)
-                                      .Where(tile => map[tile.X, tile.Y] == "" || map[tile.X, tile.Y] == symbol).ToList();
+            foreach(var neighbour in neighbours)
+            {
+                if (map[neighbour.X, neighbour.Y] != "#" && map[neighbour.X, neighbour.Y] != "&")
+                {
+                    possibleTiles.Add(new Coordinate(startPoint.X - 1, startPoint.Y));
+                }
+            }
+            return possibleTiles;
         }
+
+
+
     }
 }

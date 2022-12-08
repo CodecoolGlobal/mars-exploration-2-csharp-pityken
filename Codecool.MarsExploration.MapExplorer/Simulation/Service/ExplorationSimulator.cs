@@ -138,44 +138,36 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
                 return nextTile;
             }
 
-            if(currentPos.X > nearest.X) 
-            {
-                if (_context.map.Representation[currentPos.X -1, currentPos.Y] == " ")
+            
+                if(currentPos.X > nearest.X)
                 {
-                    newX = currentPos.X - 1;
-                    return new Coordinate(currentPos.X - 1, currentPos.Y);
+                        newX = currentPos.X - 1;
                 }
-            }
-            else if(currentPos.X < nearest.X) 
-            {
-                if (_context.map.Representation[currentPos.X + 1, currentPos.Y] == " ")
+                else if(currentPos.X < nearest.X) 
                 {
-                    newX = currentPos.X + 1;
-                    return new Coordinate(currentPos.X + 1, currentPos.Y);
+                        newX = currentPos.X + 1;
                 }
-            }
-            if(currentPos.Y > nearest.Y)
-            {
-                if (_context.map.Representation[currentPos.X, currentPos.Y - 1] == " ")
+                if(currentPos.Y > nearest.Y)
                 {
-                    newY = currentPos.Y - 1;
-                    return new Coordinate(currentPos.X, currentPos.Y - 1);
+                        newY = currentPos.Y - 1;
                 }
-            }
-            else if(currentPos.Y < nearest.Y) 
-            {
-                if (_context.map.Representation[currentPos.X, currentPos.Y + 1] == " ")
+                else if(currentPos.Y < nearest.Y) 
                 {
-                    newY = currentPos.Y + 1;
+                        newY = currentPos.Y + 1;
                 }
                 else
                 {
                     newX = possibleTiles.First().X;
                     newY = possibleTiles.First().Y;
                 }
+            
+
+            if(_context.map.GetByCoordinate(new Coordinate(newX, newY)) != " ") 
+            {
+                
             }
 
-            //return new Coordinate(newX, newY); ??
+            return new Coordinate(newX, newY);
         }
             
 

@@ -48,12 +48,46 @@ internal class Program
         
         IRoverConfigurationValidator roverConfigrationValidator = new RoverConfigurationValidator(_obstacles);
         var roverConfigurationIsValid = roverConfigrationValidator.Validate(roverConfiguration);
-        //Validate BEFORE Deploy
-        var Rover = roverDeployer.Deploy(roverConfigurationIsValid, roverConfiguration, loadedMap);
-        
+        MarsRover.MarsRover Rover;
 
+        if (!roverConfigurationIsValid)
+        {
+            Console.WriteLine("Configuration was invalid");
+            return;
+        }
+
+        Rover = roverDeployer.Deploy(roverConfigurationIsValid, roverConfiguration, loadedMap);
+        var currPos = Rover.currentPosition;
         SimulationContext Context = new SimulationContext(1, 300, Rover, Rover.currentPosition, loadedMap, possibleMinerals, Outcome, roverConfiguration);
-
         IExplorationSimulator explorationSimulator = new ExplorationSimulator(Context);
+        int waterCount = 0;
+        int mineralCount = 0;
+        int limit = Context.StepLimit;
+        do
+        {
+            var nearestResource = explorationSimulator.FindNearestResourceCoordinate();
+
+            var resourceList = roverConfiguration.mineralList.ToList();
+            while (currPos != nearestResource)
+            {
+                currPos = explorationSimulator.Move(Rover.currentPosition);
+            }
+
+            foreach (var symbol in resourceList)
+            {
+                if (symbol == "*") waterCount++;
+                mineralCount++;
+            }
+
+            var encounteredSymbol = Context.map.Representation[currPos.X, currPos.Y];
+            explorationSimulator.PickUpResource(currPos);
+            if (encounteredSymbol == "*") waterCount--;
+            if (encounteredSymbol == "%") mineralCount--;
+            limit--;
+
+        } while ((mineralCount != 0 && waterCount != 0) || limit != 0);
     }
 }
+
+//1 tud 0 nem tud
+/*https://github.com/valantonini/AStar */

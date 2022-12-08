@@ -117,9 +117,10 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
         {
             var nearest = FindNearestResourceCoordinate();
             var possibleTiles = CheckNeighbours().ToList();
-            Coordinate newTile;
-            int newX;
-            int newY;
+            int newX = currentPos.X;
+            int newY = currentPos.Y;
+
+
             if (nearest is null) 
             {
                 List<Coordinate> visitedTiles = new List<Coordinate>();

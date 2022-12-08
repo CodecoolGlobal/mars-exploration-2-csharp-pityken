@@ -166,7 +166,11 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
                 if (_context.map.Representation[currentPos.X, currentPos.Y + 1] == " ")
                 {
                     newY = currentPos.Y + 1;
-                    return new Coordinate(currentPos.X, currentPos.Y + 1);
+                }
+                else
+                {
+                    newX = possibleTiles.First().X;
+                    newY = possibleTiles.First().Y;
                 }
             }
 

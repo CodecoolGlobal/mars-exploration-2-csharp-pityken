@@ -15,11 +15,11 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
 
         double CalculateDistance(Coordinate RoverCoord, Coordinate ResourceCoord);
 
-        Coordinate FindNearestResourceCoordinate();
+        Coordinate FindNearestResourceCoordinate(int limit, Coordinate currPos);
 
-        IEnumerable<Coordinate> CheckNeighbours();
+        IEnumerable<Coordinate> CheckNeighbours(Coordinate currPos);
 
-        Coordinate Move(Coordinate currentPos);
+        Coordinate Move(Coordinate currentPos, Coordinate nearest);
 
         string PickUpResource(Coordinate currPos);
     }

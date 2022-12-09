@@ -15,7 +15,7 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
     {
         private SimulationContext _context;
         Random random = new Random();
-        
+        Coordinate prevCoordinate;
         public ExplorationSimulator(SimulationContext context)
         {
             _context= context;
@@ -62,7 +62,7 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
             return result;
         }
 
-        public Coordinate FindNearestResourceCoordinate()
+        public Coordinate FindNearestResourceCoordinate(int limit, Coordinate currPos)
         {
             var resCoords = FillDictionary();
             Dictionary<Coordinate, double> distanceDictionary = new() { };
@@ -71,107 +71,110 @@ namespace Codecool.MarsExploration.MapExplorer.Simulation.Service
                 foreach (var coord in resCoord.Value)
                 {
                     distanceDictionary.Add(coord, CalculateDistance(_context.Rover.currentPosition, coord));
-                    Console.WriteLine($"{_context.Rover.currentPosition.X}, {_context.Rover.currentPosition.Y}\t|\t{coord.X}, {coord.Y}, {CalculateDistance(_context.Rover.currentPosition, coord)}");
+                    //Console.WriteLine($"{_context.Rover.currentPosition.X}, {_context.Rover.currentPosition.Y}\t|\t{coord.X}, {coord.Y}, {CalculateDistance(_context.Rover.currentPosition, coord)}");
                 }
             }
             var visibleResourceDict = distanceDictionary.Where(x => x.Value <= _context.Rover.SightDistance);
 
             var orderedDict = visibleResourceDict.OrderBy(x => x.Value);
-            foreach(var kvp in visibleResourceDict)
-            {
-                Console.WriteLine("visDict====>{0}", kvp.Value);
-            }
-            //Console.WriteLine("disDict====>{0}", distanceDictionary.Count());
-            //Console.WriteLine("ResDict====>{0}", resCoords.Count());
-            Console.WriteLine("OrdDict====>{0}", orderedDict.Count());
+            Console.WriteLine(limit); 
             
-            return new Coordinate(0, 0); 
-                //new Coordinate(orderedDict.First().Key.X, orderedDict.First().Key.Y);
+            if(orderedDict.Count() > 0)
+            {
+                return new Coordinate(orderedDict.First().Key.X, orderedDict.First().Key.Y);
+            }
+            
+            //Console.WriteLine("postile-------------------->{0} {1}", posTiles.First().X, posTiles.First().Y);
+            return new Coordinate(-1 , -1);
 
         }
 
-        public IEnumerable<Coordinate> CheckNeighbours()
+        public IEnumerable<Coordinate> CheckNeighbours(Coordinate currPos)
         {
             var map = _context.map.Representation;
-            var startPoint = _context.Rover.currentPosition;
+            var startPoint = currPos;
             List<Coordinate> possibleTiles = new();
             var neighbours = new List<Coordinate>();
-            if (startPoint.Y != 0)
-            {
-                neighbours.Add(new Coordinate(startPoint.Y - 1, startPoint.X));
-            }
             if (startPoint.X != 0)
             {
-                neighbours.Add(new Coordinate(startPoint.Y, startPoint.X - 1));
+                neighbours.Add(new Coordinate(startPoint.X - 1, startPoint.Y));
             }
-            if (startPoint.Y != map.Length - 1)
+            if (startPoint.Y != 0)
             {
-                neighbours.Add(new Coordinate(startPoint.Y + 1, startPoint.X));
+                neighbours.Add(new Coordinate(startPoint.X, startPoint.Y - 1));
             }
-            if (startPoint.X != map.Length - 1)
+            if (startPoint.X != map.Length + 1)
             {
-                neighbours.Add(new Coordinate(startPoint.Y, startPoint.X + 1));
+                neighbours.Add(new Coordinate(startPoint.X + 1, startPoint.Y));
+            }
+            if (startPoint.Y != map.Length + 1)
+            {
+                neighbours.Add(new Coordinate(startPoint.X, startPoint.Y + 1));
             }
 
 
             foreach(var neighbour in neighbours)
             {
+                //Console.WriteLine("{0} {1}",neighbour.X, neighbour.Y);
                 if (map[neighbour.X, neighbour.Y] != "#" && map[neighbour.X, neighbour.Y] != "&")
                 {
-                    possibleTiles.Add(new Coordinate(startPoint.X - 1, startPoint.Y));
+                    possibleTiles.Add(new Coordinate(neighbour.X, neighbour.Y));
                 }
             }
             return possibleTiles;
         }
 
-        public Coordinate Move(Coordinate currentPos)
+            
+        public Coordinate Move(Coordinate currentPos, Coordinate nearest)
         {
-            var nearest = FindNearestResourceCoordinate();
-            var possibleTiles = CheckNeighbours().ToList();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Curr: {0} {1}", currentPos.X, currentPos.Y);
+            Console.WriteLine("Near: {0} {1}", nearest.X, nearest.Y);
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+            var possibleTiles = CheckNeighbours(currentPos).ToList();
             int newX = currentPos.X;
             int newY = currentPos.Y;
 
-
-            if (nearest is null) 
+            if (nearest == new Coordinate(-1, -1))
             {
-                List<Coordinate> visitedTiles = new List<Coordinate>();
-                var Rover = _context.Rover;
-                visitedTiles.Add(Rover.currentPosition);
-                foreach(var visitedTile in visitedTiles)
-                {
-                if (possibleTiles.Contains(visitedTile))
-                    {
-                        possibleTiles.Remove(visitedTile);
-                    }
-                }
-
-                var nextTile = possibleTiles[random.Next(possibleTiles.Count())];
+                var nextTile = possibleTiles.Where(x => x != prevCoordinate).ToList()[random.Next(possibleTiles.Count()-1)];
+                prevCoordinate = currentPos;
                 return nextTile;
             }
-
-            
-                if(currentPos.X > nearest.X)
-                {
-                        newX = currentPos.X - 1;
-                }
-                else if(currentPos.X < nearest.X) 
-                {
-                        newX = currentPos.X + 1;
-                }
-                if(currentPos.Y > nearest.Y)
-                {
-                        newY = currentPos.Y - 1;
-                }
-                else if(currentPos.Y < nearest.Y) 
-                {
-                        newY = currentPos.Y + 1;
-                }
             
 
-            if(_context.map.GetByCoordinate(new Coordinate(newX, newY)) != " ") 
+            else
             {
+                
+                //Set X Coordinate
+                if (currentPos.X > nearest.X)
+                {
+                    newX = currentPos.X - 1;
+                }
+                else if (currentPos.X < nearest.X)
+                {
+                    newX = currentPos.X + 1;
+                }
+                else
+                {
                     newX = possibleTiles.First().X;
+                }
+
+                //Set Y Coordinate
+                if (currentPos.Y > nearest.Y)
+                {
+                    newY = currentPos.Y - 1;
+                }
+                else if (currentPos.Y < nearest.Y)
+                {
+                    newY = currentPos.Y + 1;
+                }
+                else
+                {
                     newY = possibleTiles.First().Y;
+                }
+
             }
 
             return new Coordinate(newX, newY);

@@ -17,7 +17,7 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        var mapFile = $@"{WorkDir}\Resources\exploration-0.map";
+        var mapFile = $@"{WorkDir}\Resources\exploration-1.map";
         var fileMap = File.ReadAllLines(mapFile);
         var row = fileMap.Length;
         var col = fileMap[0].Length;
@@ -58,34 +58,38 @@ internal class Program
 
         Rover = roverDeployer.Deploy(roverConfigurationIsValid, roverConfiguration, loadedMap);
         var currPos = Rover.currentPosition;
-        SimulationContext Context = new SimulationContext(1, 50, Rover, Rover.currentPosition, loadedMap, possibleMinerals, Outcome, roverConfiguration);
+        SimulationContext Context = new SimulationContext(1, 100, Rover, Rover.currentPosition, loadedMap, possibleMinerals, Outcome, roverConfiguration);
         IExplorationSimulator explorationSimulator = new ExplorationSimulator(Context);
         int waterCount = 0;
         int mineralCount = 0;
         int limit = Context.StepLimit;
-        var nearestResource = explorationSimulator.FindNearestResourceCoordinate();
+        var nearestResource = explorationSimulator.FindNearestResourceCoordinate(limit, currPos);
+        var resourceList = roverConfiguration.mineralList.ToList();
+
+        foreach (var symbol in resourceList)
+        {
+            if (symbol == "*") waterCount++;
+            mineralCount++;
+        }
+        
         do
         {
-
-            var resourceList = roverConfiguration.mineralList.ToList();
             while (currPos != nearestResource)
             {
-                currPos = explorationSimulator.Move(Rover.currentPosition);
+                currPos = explorationSimulator.Move(currPos, nearestResource);
+                limit--;
             }
 
-            foreach (var symbol in resourceList)
-            {
-                if (symbol == "*") waterCount++;
-                mineralCount++;
-            }
+            var encounteredSymbol = explorationSimulator.PickUpResource(currPos);
 
-            var encounteredSymbol = Context.map.Representation[currPos.X, currPos.Y];
-            explorationSimulator.PickUpResource(currPos);
+            
+            loadedMap.Representation[currPos.X, currPos.Y] = " ";
+
             if (encounteredSymbol == "*") waterCount--;
             if (encounteredSymbol == "%") mineralCount--;
-            limit--;
-            nearestResource = explorationSimulator.FindNearestResourceCoordinate();
-        } while ((mineralCount != 0 && waterCount != 0) || limit != 0);
+           
+            nearestResource = explorationSimulator.FindNearestResourceCoordinate(limit, currPos);
+        } while ((mineralCount > 0 || waterCount > 0) && limit > 0);
     }
 }
 

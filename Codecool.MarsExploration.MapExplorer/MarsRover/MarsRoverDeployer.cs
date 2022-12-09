@@ -20,43 +20,39 @@ namespace Codecool.MarsExploration.MapExplorer.MarsRover
 
         public MarsRover Deploy(bool canDeploy, RoverConfiguration roverConfig, Map map)
         {
-            //if (!canDeploy) 
-            //{
-            //    Console.ForegroundColor = ConsoleColor.DarkRed;
-            //    Console.WriteLine("The Rover cannot deploy on the given coordinates!\n");
-            //    Console.ForegroundColor = ConsoleColor.Gray;
-            //    return;
-            //}
+         
             
             var startPoint = roverConfig.startingCoordinate;
             Coordinate currPos = startPoint;
             map.Representation[startPoint.X, startPoint.Y] = "S";
-
-            if (map.Representation[startPoint.X - 1, startPoint.Y] == " ")
+            var neighbours = new List<Coordinate>();
+            if (startPoint.X != 0)
             {
-                map.Representation[startPoint.X - 1, startPoint.Y] = "r";
-                currPos = new Coordinate(startPoint.X - 1, startPoint.Y);
+                neighbours.Add(new Coordinate(startPoint.X - 1, startPoint.Y));
+            }
+            if (startPoint.Y != 0)
+            {
+                neighbours.Add(new Coordinate(startPoint.X, startPoint.Y - 1));
+            }
+            if (startPoint.X != map.Representation.Length + 1)
+            {
+                neighbours.Add(new Coordinate(startPoint.X + 1, startPoint.Y));
+            }
+            if (startPoint.Y != map.Representation.Length + 1)
+            {
+                neighbours.Add(new Coordinate(startPoint.X, startPoint.Y + 1));
             }
 
-            else if (map.Representation[startPoint.X + 1, startPoint.Y] == " ")
+            foreach (var neighbour in neighbours)
             {
-                map.Representation[startPoint.X + 1, startPoint.Y] = "r";
-                currPos = new Coordinate(startPoint.X + 1, startPoint.Y);
-            }
-
-            else if (map.Representation[startPoint.X, startPoint.Y - 1] == " ")
-            {
-                map.Representation[startPoint.X, startPoint.Y - 1] = "r";
-                currPos = new Coordinate(startPoint.X, startPoint.Y - 1);
-            }
-
-            else if (map.Representation[startPoint.X, startPoint.Y + 1] == " ")
-            {
-                map.Representation[startPoint.X, startPoint.Y + 1] = "r";
-                currPos = new Coordinate(startPoint.X, startPoint.Y + 1);
+                if (map.Representation[neighbour.X, startPoint.Y] == " ")
+                {
+                    map.Representation[neighbour.X, neighbour.Y] = "r";
+                    currPos = new Coordinate(neighbour.X, neighbour.Y);
+                }
             }
             
-            MarsRover Rover = new MarsRover(1, currPos, 5, new List<Coordinate>(){});
+            MarsRover Rover = new MarsRover(1, currPos, 10, new List<Coordinate>(){});
             return Rover;
         }
     }
